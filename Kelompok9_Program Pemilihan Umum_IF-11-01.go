@@ -125,6 +125,7 @@ func tampilkanSemuaCalon() {
 
 // Cari Data Calon berdasarkan
 func cariDataCalon() {
+	tampilkanSemuaCalon()
 	fmt.Println("\n1. Cari berdasarkan nama calon")
 	fmt.Println("2. Cari berdasarkan nama partai")
 	fmt.Println("3. Cari berdasarkan nama pemilih ")
@@ -152,17 +153,32 @@ func cariDataCalon() {
 	}
 }
 
-func cariCalon(nama string) {//Sequential search
-	// Loop untuk mencari calon dalam daftar
-	for i := 0; i < jumlahCalon; i++ {
-		// Jika nama calon ditemukan, tampilkan informasi calon
-		if strings.EqualFold(daftarCalon[i].namacalon, nama) {
-			fmt.Printf("Nama: %s, Partai: %s, Suara: %d\n", daftarCalon[i].namacalon, daftarCalon[i].namapartai, daftarCalon[i].Suara)
+func cariCalon(nama string) {
+	// Binary search untuk mencari calon dalam daftar
+	left, right := 0, jumlahCalon-1
+
+	for left <= right {
+		mid := left + (right-left)/2
+		compare := strings.Compare(strings.ToLower(daftarCalon[mid].namacalon), strings.ToLower(nama))
+
+		if compare == 0 {
+			// Jika ditemukan, tampilkan informasi calon
+			fmt.Printf("Nama: %s, Partai: %s, Suara: %d\n", daftarCalon[mid].namacalon, daftarCalon[mid].namapartai, daftarCalon[mid].Suara)
 			return
+		} else if compare < 0 {
+			// Nama calon berada di bagian kanan
+			left = mid + 1
+		} else {
+			// Nama calon berada di bagian kiri
+			right = mid - 1
 		}
-	} // Jika calon tidak ditemukan, tampilkan pesan
+	}
+
+	// Jika calon tidak ditemukan
 	fmt.Println("Calon tidak ditemukan.")
 }
+
+
 
 func cariPartai(partai string) {//sequential search
 	// Variabel untuk menandai apakah partai ditemukan
@@ -194,9 +210,8 @@ func cariPeserta(namaPemilih string) {//sequential search
 	fmt.Println("Pemilih tidak ditemukan atau belum memilih.")
 }
 
-// Fungsi untuk menampilkan perolehan suara calon berdasarkan urutan suara
+//menampilkan perolehan suara calon berdasarkan urutan suara
 func tampilkanPerolehanSuara() {
-	// Menampilkan menu pilihan urutan
 	fmt.Println("Pilih urutan perolehan suara:")
 	fmt.Println("1. Ascending")
 	fmt.Println("2. Descending")
