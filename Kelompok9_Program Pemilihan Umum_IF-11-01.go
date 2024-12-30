@@ -43,11 +43,11 @@ func menuPetugas() {
 		// Switch case pilihan admin
 		switch pilihan {
 		case 1:
-			tampilkanSemuaCalon(false) //Menampilkan calon berdasarkan abjad(false = descending, true= ascending)
+			tampilkanSemuaCalon() //Menampilkan calon berdasarkan abjad(false = descending, true= ascending)
 		case 2:
 			cariDataCalon()
 		case 3:
-			tampilkanPerolehanSuara(false) // Menampilkan perolehan suara calon berdasarkan suara(false = descending, true= ascending)
+			tampilkanPerolehanSuara() // Menampilkan perolehan suara calon berdasarkan suara(false = descending, true= ascending)
 		case 4:
 			pengoperasianDataCalon()
 		case 5:
@@ -82,11 +82,11 @@ func menuPemilih() {
 
 		switch pilihan {
 		case 1:
-			tampilkanSemuaCalon(true)
+			tampilkanSemuaCalon()
 		case 2:
 			cariDataCalon()
 		case 3:
-			tampilkanPerolehanSuara(true)
+			tampilkanPerolehanSuara()
 		case 4:
 			pemilihanCalon()
 		case 5:
@@ -99,30 +99,30 @@ func menuPemilih() {
 		}
 	}
 }
-// Fungsi menampilkan semua calon
-func tampilkanSemuaCalon(ascending bool) {
-	// Cek apakah jumlah calon 0
-	if jumlahCalon == 0 {
-		// Jika tidak ada calon, tampilkan pesan dan keluar dari fungsi
-		fmt.Println("Tidak ada calon.")
-		return
-	}
-	for i := 0; i < jumlahCalon-1; i++ {
-		for j := i + 1; j < jumlahCalon; j++ {
-			//jika ascending true, urutkan kecil ke besar
-			//jjika ascending false, urutkan besar ke kecil
-			if (ascending && strings.Compare(daftarCalon[i].namacalon, daftarCalon[j].namacalon) > 0) ||
-				(!ascending && strings.Compare(daftarCalon[i].namacalon, daftarCalon[j].namacalon) < 0) {
-				daftarCalon[i], daftarCalon[j] = daftarCalon[j], daftarCalon[i]
-			}
+//menampilkan semua calon(INSERTION(ASCENDING)) 
+func tampilkanSemuaCalon() {
+    // Cek apakah jumlah calon 0
+    if jumlahCalon == 0 {
+        // Jika tidak ada calon, tampilkan pesan dan keluar dari fungsi
+        fmt.Println("Tidak ada calon.")
+        return
+    }
+    for i := 1; i < jumlahCalon; i++ {
+		x := daftarCalon[i]
+		j := i - 1
+		for j >= 0 && strings.Compare(daftarCalon[j].namacalon, x.namacalon) > 0 {
+			daftarCalon[j+1] = daftarCalon[j]
+			j--
 		}
+		daftarCalon[j+1] = x
 	}
-	fmt.Println("Daftar Calon:")
-	for i := 0; i < jumlahCalon; i++ {
-		// tampil calon dan partainya
-		fmt.Printf("%d. %s (%s)\n", i+1, daftarCalon[i].namacalon, daftarCalon[i].namapartai)
-	}
+    fmt.Println("Daftar Calon:")
+    for i := 0; i < jumlahCalon; i++ {
+        // Tampilkan calon dan partainya
+        fmt.Printf("%d. %s (%s)\n", i+1, daftarCalon[i].namacalon, daftarCalon[i].namapartai)
+    }
 }
+
 // Cari Data Calon berdasarkan
 func cariDataCalon() {
 	fmt.Println("\n1. Cari berdasarkan nama calon")
@@ -152,7 +152,7 @@ func cariDataCalon() {
 	}
 }
 
-func cariCalon(nama string) {
+func cariCalon(nama string) {//Sequential search
 	// Loop untuk mencari calon dalam daftar
 	for i := 0; i < jumlahCalon; i++ {
 		// Jika nama calon ditemukan, tampilkan informasi calon
@@ -164,7 +164,7 @@ func cariCalon(nama string) {
 	fmt.Println("Calon tidak ditemukan.")
 }
 
-func cariPartai(partai string) {
+func cariPartai(partai string) {//sequential search
 	// Variabel untuk menandai apakah partai ditemukan
 	for i := 0; i < jumlahCalon; i++ {
 		// Jika nama partai ditemukan, tampilkan informasi calon
@@ -177,7 +177,7 @@ func cariPartai(partai string) {
 	fmt.Println("Partai tidak ditemukan.")
 }
 
-func cariPeserta(namaPemilih string) {
+func cariPeserta(namaPemilih string) {//sequential search
 	//loop mencari pemilih dalam daftar
 	for i := 0; i < jumlahPemilih; i++ {
 		if strings.EqualFold(daftarPemilih[i].namapemilih, namaPemilih) && daftarPemilih[i].SudahMemilih {
@@ -195,26 +195,36 @@ func cariPeserta(namaPemilih string) {
 }
 
 // Fungsi untuk menampilkan perolehan suara calon berdasarkan urutan suara
-func tampilkanPerolehanSuara(descending bool) {
-	if jumlahCalon == 0 {
-		// Jika tidak ada calon, tampilkan pesan dan keluar dari fungsi
-		fmt.Println("Tidak ada calon.")
-		return
-	}
-	//Bubble Sort untuk mengurutkan calon berdasarkan  suara
-	for i := 0; i < jumlahCalon-1; i++ { // Loop untuk iterasi calon
-		for j := i + 1; j < jumlahCalon; j++ { // Loop untuk iterasi calon selanjutnya
-			if (descending && daftarCalon[i].Suara < daftarCalon[j].Suara) ||
-				(!descending && daftarCalon[i].Suara > daftarCalon[j].Suara) { // Jika descending true, urutkan secara menurun
-				daftarCalon[i], daftarCalon[j] = daftarCalon[j], daftarCalon[i] // Jika descending false, urutkan secara naik
+func tampilkanPerolehanSuara() {
+	// Menampilkan menu pilihan urutan
+	fmt.Println("Pilih urutan perolehan suara:")
+	fmt.Println("1. Ascending")
+	fmt.Println("2. Descending")
+	var pilihan int
+	fmt.Print("Pilihan : ")
+	fmt.Scan(&pilihan)
+	// Selection Sort berdasarkan pilihan
+	for i := 0; i < jumlahCalon-1; i++ {
+		selectedIdx := i
+		for j := i + 1; j < jumlahCalon; j++ {
+			if (pilihan == 1 && daftarCalon[j].Suara < daftarCalon[selectedIdx].Suara) || (pilihan == 2 && daftarCalon[j].Suara > daftarCalon[selectedIdx].Suara) {
+				selectedIdx = j
 			}
 		}
+		// Tukar elemen yang terpilih dengan elemen di posisi i
+		daftarCalon[i], daftarCalon[selectedIdx] = daftarCalon[selectedIdx], daftarCalon[i]
 	}
-	fmt.Println("Perolehan Suara:")
-	for i := 0; i < jumlahCalon; i++ { // Loop untuk menampilkan perolehan suara calon
+	// Menampilkan hasil perolehan suara
+	if pilihan == 1 {
+		fmt.Println("Hasil Perolehan Suara (Ascending):")
+	} else {
+		fmt.Println("Hasil Perolehan Suara (Descending):")
+	}
+	for i := 0; i < jumlahCalon; i++ {
 		fmt.Printf("%d. %s (%s): %d suara\n", i+1, daftarCalon[i].namacalon, daftarCalon[i].namapartai, daftarCalon[i].Suara)
 	}
 }
+
 
 //fungsi tampil pemilih
 func tampilkanpemilih(){
@@ -251,7 +261,7 @@ func pemilihanCalon() {
 				//jika durasi oemilihan tidak mencukupi return daftar calon
 				if durasi-daftarPemilih[i].waktu < 0 {
 					fmt.Println("Waktu tidak cukup untuk melakukan pemilihan.")
-					tampilkanSemuaCalon(true)
+					tampilkanSemuaCalon()
 					return
 				}
 				//tampilkan calon
@@ -280,7 +290,7 @@ func pemilihanCalon() {
 		fmt.Println("Pemilih tidak ditemukan.")
 	}else{
 		fmt.Println("\nDiluar waktu pemilihan! Set waktu pemilihan!")
-		tampilkanSemuaCalon(true)
+		tampilkanSemuaCalon()
 	}	
 }
 
